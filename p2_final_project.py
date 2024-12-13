@@ -59,89 +59,55 @@ X_train, X_test, y_train, y_test = train_test_split(X,
 log_reg = LogisticRegression(class_weight= 'balanced')
 log_reg.fit(X_train, y_train)
 
+import streamlit as st
 
 st.markdown("Hello! My name is Giovanna. Welcome to my app!")
+st.markdown("### Welcome to the LinkedIn Usage Prediction App!")
+st.markdown("#### Let's find out how likely you are to be a LinkedIn user based on your profile.")
 
 st.markdown("Please provide your personal details below to predict your usage of LinkedIn:")
 
-st.subheader("Are you a LinkedIn user?")
-sm_li = st.subheader("What is your approximate household income?")
+st.markdown("### Let's get to know you a little better!")
+st.subheader("Are you on LinkedIn? Let's find out!")
+sm_li = st.radio("Are you a LinkedIn user?", options=[(1, "Yes! I'm LinkedIn professional!"), (0, "Nope, not yet!")])
+
 income = st.selectbox(
-    "Select income range:",
-    options=[
-        (1, "Less than $10,000"),
-        (2, "$10,000 - $19,999"),
-        (3, "$20,000 - $29,999"),
-        (4, "$30,000 - $39,999"),
-        (5, "$40,000 - $49,999"),
-        (6, "$50,000 - $74,999"),
-        (7, "$75,000 - $99,999"),
-        (8, "$100,000 - $149,999"),
-        (9, "$150,000 or more"),
-        (10, "Don't Know"),
-        (11, "Refused")
-    ],
+    "What's your income range? (No need to stress about it, just select your range!)",
+    options=[(1, "Less than $10,000"), (2, "$10,000 - $19,999"), (3, "$20,000 - $29,999"), 
+             (4, "$30,000 - $39,999"), (5, "$40,000 - $49,999"), (6, "$50,000 - $74,999"), 
+             (7, "$75,000 - $99,999"), (8, "$100,000 - $149,999"), (9, "$150,000 or more")],
     format_func=lambda x: x[1]
-)[0]
+)
 
-st.subheader("What is your highest level of education?")
 educ2 = st.selectbox(
-    "Select your highest level of education:",
-    options=[
-        (1, "Middle school or less"),
-        (2, "High school incomplete"),
-        (3, "High school graduate/GED"),
-        (4, "Some college, no degree"),
-        (5, "Associate degree"),
-        (6, "Bachelor's degree"),
-        (7, "Some postgraduate schooling, no degree"),
-        (8, "Postgraduate or professional degree")
-    ],
+    "What’s your highest level of education?",
+    options=[(1, "Middle school or less"), (2, "High school incomplete"), (3, "High school graduate/GED"), 
+             (4, "Some college, no degree"), (5, "Associate degree"), (6, "Bachelor's degree"), 
+             (7, "Some postgraduate schooling"), (8, "Postgraduate or professional degree")],
     format_func=lambda x: x[1]
-)[0]
+)
 
-st.subheader("Are you the parent of a child under 18 years of age?")
-parent = st.radio(
-    "Select your parental status:",
-    options=[
-        (1, "Yes"),
-        (0, "No")
-    ],
-    format_func=lambda x: x[1]
-)[0]
+parent = st.radio("Do you have any children under 18?", options=[(1, "Yes, I’m a parent!"), (0, "Nope, no kids here.")])
+married = st.radio("Are you married?", options=[(1, "Yes, happily married!"), (0, "No, I'm single")])
+female = st.radio("Are you a woman?", options=[(1, "Yes, I’m a lady!"), (0, "No, I’m a guy")])
 
-st.subheader("What is your marital status?")
-married = st.radio(
-    "Select your marital status:",
-    options=[
-        (1, "Married"),
-        (0, "Not Married")
-    ],
-    format_func=lambda x: x[1]
-)[0]
+age = st.number_input("How old are you? Don’t worry, we won't judge!", min_value=18, max_value=99, step=1)
 
-st.subheader("What is your gender?")
-female = st.radio(
-    "Select your gender:",
-    options=[
-        (1, "Female"),
-        (0, "Male")
-    ],
-    format_func=lambda x: x[1]
-)[0]
-
-age = st.number_input("Enter your age:", min_value=1, max_value=98, step=1)
 
 def sent_app(user_data):
-
     user_data = pd.DataFrame([user_data], columns=['income', 'educ2', 'parent','married', 'female', 'age'])
 
-    probability = logreg.predict_proba(user_data)[0][1]
-    classification = logreg.predict(user_data)[0]
-    
-    st.subheader("Results:")
-    st.write(f"**Classification:** You are {'a LinkedIn user' if classification == 1 else 'not a LinkedIn user'}.")
-    st.write(f"**Probability:** There is a {probability * 100:.2f}% chance that you are a LinkedIn user.")
+    probability = log_reg.predict_proba(user_data)[0][1]
+    classification = log_reg.predict(user_data)[0]
+
+    st.markdown("### Here’s the big reveal! 🥁")
+    st.write(f"**Classification:** Based on your profile, you are {'a LinkedIn user' if classification == 1 else 'not a LinkedIn user'}.")
+    st.write(f"**Probability:** There’s a {probability * 100:.2f}% chance that you are a LinkedIn user!")
+
+    if classification == 1:
+        st.markdown("Wow, you are **LinkedIn Ready**! 📈")
+    else:
+        st.markdown("Looks like you might not be a LinkedIn pro...yet! 🚀")
 
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
@@ -151,19 +117,37 @@ def sent_app(user_data):
         gauge={
             "axis": {"range": [0, 100]},
             "steps": [
-                {"range": [0, 30], "color": "pink"},
-                {"range": [30, 70], "color": "purple"},
-                {"range": [70, 100], "color": "blue"},],
+                {"range": [0, 30], "color": "lightgray"},
+                {"range": [30, 70], "color": "lightblue"},
+                {"range": [70, 100], "color": "blue"}],
             "bar": {"color": "gold"} }))
-    return st.plotly_chart(fig)
+    
+    st.plotly_chart(fig)
+fig = go.Figure(go.Indicator(
+    mode="gauge+number",
+    value=probability * 100, 
+    title={'text': f"LinkedIn User Probability: {probability * 100:.2f}%"},
+    number={"suffix": "%"},
+    gauge={
+        "axis": {"range": [0, 100]},
+        "steps": [
+            {"range": [0, 30], "color": "lightgray"},
+            {"range": [30, 70], "color": "lightblue"},
+            {"range": [70, 100], "color": "blue"}],
+        "bar": {"color": "gold"} }))
+    
+st.plotly_chart(fig)
 
-if st.button("Submit"):
-    user_data = {
-        'income': income,
-        'educ2': educ2,
-        'parent': parent,
-        'married': married,
-        'female': female,
-        'age': age
-    }
-    sent_app(user_data)
+st.markdown("### Thank you for completing the form! 🎉")
+st.write(f"Based on your profile, here's what we found:")
+
+if classification == 1:
+    st.markdown("Great job! You're a LinkedIn user. Time to network and grow your professional empire! 🌐💼")
+else:
+    st.markdown("Hmm, it seems like you're not yet a LinkedIn user. Maybe now's a good time to join and explore new career opportunities? 🚀📈")
+
+if age < 18:
+    st.error("You must be at least 18 years old to use this app. Please try again later! 👶❌")
+elif income > 9:
+    st.error("Please select a valid income range. Don't worry, we’re not here to judge your finances! 💰")
+
