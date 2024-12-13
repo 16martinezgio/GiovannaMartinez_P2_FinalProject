@@ -57,16 +57,7 @@ st.markdown("Hello! My name is Giovanna. Welcome to my app!")
 st.markdown("Please provide your personal details below to predict your usage of LinkedIn:")
 
 st.subheader("Are you a LinkedIn user?")
-sm_li = st.selectbox(
-    "Select an option:",
-    options=[
-        (1, "Yes, I use LinkedIn"),
-        (0, "No, I do not use LinkedIn")
-    ],
-    format_func=lambda x: x[1]
-)[0]
-
-st.subheader("What is your approximate household income?")
+sm_li = st.subheader("What is your approximate household income?")
 income = st.selectbox(
     "Select income range:",
     options=[
