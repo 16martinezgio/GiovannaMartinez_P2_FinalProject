@@ -4,7 +4,6 @@ import plotly.graph_objects as go
 
 import pandas as pd
 import numpy as np
-import seaborn as sns
 import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt
@@ -20,7 +19,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
+<<<<<<< HEAD
 s = pd.read_csv('social_media_usage.csv')
+=======
+s = pd.read_csv('social_media_usage(2).csv')
+>>>>>>> 7d10c598c798a3217aca68242e019fb3e7dc7aa8
 
 def clean_sm(x):
     return np.where(x == 1, 1, 0)
@@ -62,16 +65,7 @@ st.markdown("Hello! My name is Giovanna. Welcome to my app!")
 st.markdown("Please provide your personal details below to predict your usage of LinkedIn:")
 
 st.subheader("Are you a LinkedIn user?")
-sm_li = st.selectbox(
-    "Select an option:",
-    options=[
-        (1, "Yes, I use LinkedIn"),
-        (0, "No, I do not use LinkedIn")
-    ],
-    format_func=lambda x: x[1]
-)[0]
-
-st.subheader("What is your approximate household income?")
+sm_li = st.subheader("What is your approximate household income?")
 income = st.selectbox(
     "Select income range:",
     options=[
