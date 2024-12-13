@@ -1,3 +1,7 @@
+import streamlit as st
+from textblob import TextBlob
+import plotly.graph_objects as go
+
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -16,7 +20,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
-s = pd.read_csv('social_media_usage (2).csv')
+s = pd.read_csv('social_media_usage.csv')
 
 def clean_sm(x):
     return np.where(x == 1, 1, 0)
