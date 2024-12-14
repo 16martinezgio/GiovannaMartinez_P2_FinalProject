@@ -58,14 +58,19 @@ age = st.number_input("🎂 How old are you?", min_value=18, max_value=99, step=
 
 # Prediction function
 def predict_usage(user_data):
-    user_data = pd.DataFrame([user_data], columns=['income', 'education', 'parent', 'married', 'female', 'age'])
+    # Ensure input matches model's expected feature names
+    user_data = pd.DataFrame([user_data], columns=['age', 'education', 'income', 'parent', 'married', 'female'])
+    
+    # Predict probabilities and classification
     probability = log_reg.predict_proba(user_data)[0][1]
     classification = log_reg.predict(user_data)[0]
 
+    # Display results
     st.markdown("### 🎉 Prediction Results 🎉")
     st.write(f"**🤖 Classification:** {'LinkedIn user! 🏆' if classification == 1 else 'Not a LinkedIn user. 🤷‍♂️'}")
     st.write(f"**📊 Probability:** {probability * 100:.2f}% chance of being a LinkedIn user.")
 
+    # Create gauge visualization
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=probability * 100,
@@ -83,7 +88,8 @@ def predict_usage(user_data):
 
 # Process inputs and make predictions
 if st.button("✨ Predict My LinkedIn Future! ✨"):
-    user_data = [income[0], educ2[0], parent, married, female, age]
+    # Collect user inputs and ensure they match model's feature order
+    user_data = [age, educ2[0], income[0], parent, married, female]
     predict_usage(user_data)
 
 st.markdown("---")
