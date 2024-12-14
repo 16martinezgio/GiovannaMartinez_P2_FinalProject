@@ -64,31 +64,60 @@ age = st.number_input("🎂 How old are you?", min_value=18, max_value=97, step=
 
 # Prediction function
 def predict_usage(user_data):
-    user_data = pd.DataFrame([user_data], columns=['age', 'education', 'income', 'parent', 'married', 'female'])
-    probability = log_reg.predict_proba(user_data)[0][1]
-    classification = log_reg.predict(user_data)[0]
+    try:
+        # Debugging: Print user data to the Streamlit app
+        st.write("**Debug Info: User Data**", user_data)
+        
+        # Ensure input matches model's expected feature names
+        user_data = pd.DataFrame([user_data], columns=['age', 'education', 'income', 'parent', 'married', 'female'])
+        
+        # Debugging: Print the formatted DataFrame
+        st.write("**Debug Info: Formatted User Data**", user_data)
+        
+        # Predict probabilities and classification
+        probability = log_reg.predict_proba(user_data)[0][1]
+        classification = log_reg.predict(user_data)[0]
 
-    st.markdown("### 🎉 Prediction Results 🎉")
-    st.write(f"**🤖 Classification:** {'LinkedIn user! 🏆' if classification == 1 else 'Not a LinkedIn user. 🤷‍♂️'}")
-    st.write(f"**📊 Probability:** {probability * 100:.2f}% chance of being a LinkedIn user.")
+        # Display results
+        st.markdown("### 🎉 Prediction Results 🎉")
+        st.write(f"**🤖 Classification:** {'LinkedIn user! 🏆' if classification == 1 else 'Not a LinkedIn user. 🤷‍♂️'}")
+        st.write(f"**📊 Probability:** {probability * 100:.2f}% chance of being a LinkedIn user.")
 
-    fig = go.Figure(go.Indicator(
-        mode="gauge+number",
-        value=probability * 100,
-        title={'text': "📈 LinkedIn User Probability"},
-        gauge={
-            "axis": {"range": [0, 100]},
-            "steps": [
-                {"range": [0, 30], "color": "lightgray"},
-                {"range": [30, 70], "color": "lightblue"},
-                {"range": [70, 100], "color": "blue"}
-            ],
-            "bar": {"color": "gold"}
-        }
-    ))
-    st.plotly_chart(fig)
+        # Create gauge visualization
+        fig = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=probability * 100,
+            title={'text': "📈 LinkedIn User Probability"},
+            gauge={
+                "axis": {"range": [0, 100]},
+                "steps": [
+                    {"range": [0, 30], "color": "lightgray"},
+                    {"range": [30, 70], "color": "lightblue"},
+                    {"range": [70, 100], "color": "blue"}
+                ],
+                "bar": {"color": "gold"}
+            }
+        ))
+        st.plotly_chart(fig)
+
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        st.write("**Debug Info: Error Details**", str(e))
 
 # Button for prediction
 if st.button("✨ Predict My LinkedIn Future! ✨"):
-    user_data = [age, educ2[0], income[0], parent, married, female]
-    predict_usage(user_data)
+    try:
+        # Correctly extract numeric values for income and education
+        income_value = income[0]  # Extract the first element of the tuple
+        educ2_value = educ2[0]    # Extract the first element of the tuple
+        
+        # Prepare user_data with correctly formatted inputs
+        user_data = [float(age), float(educ2_value), float(income_value), float(parent), float(married), float(female)]
+        
+        # Debugging: Print raw user data before prediction
+        st.write("**Debug Info: Raw Input Data**", user_data)
+        
+        predict_usage(user_data)
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        st.write("**Debug Info: Error Details**", str(e))
