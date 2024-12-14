@@ -30,15 +30,19 @@ def clean_sm(x):
 
 s["sm_li"] = clean_sm(s["web1h"])
 
-ss = pd.DataFrame({
-    "sm_li": s["sm_li"],
-    "income": np.where(s["income"] > 9, np.nan, s["income"]),
-    "education": np.where(s["educ2"] > 8, np.nan, s["educ2"]),
-    "parent": np.where(s["par"] == 1, 1, 0),
-    "married": np.where(s["marital"] == 1, 1, 0),
-    "female": np.where(s["gender"] == 2, 1, 0),
-    "age": np.where(s["age"] > 98, np.nan, s["age"])
-}).dropna()
+s['sm_li'] = clean_sm(s["web1h"])
+
+ss = s[['sm_li', 'income', 'educ2', 'par', 'marital', 'gender', 'age']].copy()
+
+ss['income'] = ss['income'].apply(lambda x: x if x <= 9 else np.nan)
+ss['education'] = ss['educ2'].apply(lambda x: x if x <= 8 else np.nan)
+ss['age'] = ss['age'].apply(lambda x: x if x <= 97 else np.nan)
+
+ss['parent'] = ss['par'].apply(lambda x: 1 if x == 1 else 0)
+ss['married'] = ss['marital'].apply(lambda x: 1 if x == 1 else 0)
+ss['female'] = ss['gender'].apply(lambda x: 1 if x == 2 else 0)
+
+ss = ss.drop(columns=['par', 'marital', 'gender', 'educ2']).dropna()
 
 # Train the model
 y = ss["sm_li"]
