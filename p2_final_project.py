@@ -134,6 +134,7 @@ fig = go.Figure(go.Indicator(
         "bar": {"color": "gold"} }))
     
 st.plotly_chart(fig)
+<<<<<<< HEAD
 
 st.markdown("### Thank you for completing the form! 🎉")
 st.write(f"Based on your profile, here's what we found:")
@@ -147,3 +148,19 @@ if age < 18:
     st.error("You must be at least 18 years old to use this app. Please try again later! 👶❌")
 elif income > 9:
     st.error("Please select a valid income range. Don't worry, we’re not here to judge your finances! 💰")
+=======
+
+st.markdown("### Thank you for completing the form! 🎉")
+st.write(f"Based on your profile, here's what we found:")
+
+if classification == 1:
+    st.markdown("Great job! You're a LinkedIn user. Time to network and grow your professional empire! 🌐💼")
+else:
+    st.markdown("Hmm, it seems like you're not yet a LinkedIn user. Maybe now's a good time to join and explore new career opportunities? 🚀📈")
+
+if age < 18:
+    st.error("You must be at least 18 years old to use this app. Please try again later! 👶❌")
+elif income > 9:
+    st.error("Please select a valid income range. Don't worry, we’re not here to judge your finances! 💰")
+
+>>>>>>> 674ff66e580819b11bce0c9a0af92b644cc388c4
