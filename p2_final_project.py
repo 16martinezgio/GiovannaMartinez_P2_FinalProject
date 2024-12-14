@@ -162,5 +162,3 @@ if age < 18:
     st.error("You must be at least 18 years old to use this app. Please try again later! 👶❌")
 elif income > 9:
     st.error("Please select a valid income range. Don't worry, we’re not here to judge your finances! 💰")
-
->>>>>>> 674ff66e580819b11bce0c9a0af92b644cc388c4
